@@ -127,7 +127,7 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
 
 
-        //IMAGE
+        // IMAGE
         $this->start_controls_section(
             'image_style_section',
             [
@@ -155,17 +155,18 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
                 ]
             );
 
-            // $this->add_control(
-            //     'image_border_radius',
-            //     [
-            //         'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
-            //         'type' => Controls_Manager::SLIDER,
-            //         'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-            //         'selectors' => [
-            //             '{{WRAPPER}} .post-thumbnail' => 'border-radius: {{SIZE}}{{UNIT}}',
-            //         ],
-            //     ]
-            // );
+            $this->add_control(
+                'custom_dimension',
+                [
+                    'label' => esc_html__( 'Image Dimension', 'textdomain' ),
+                    'type' => \Elementor\Controls_Manager::IMAGE_DIMENSIONS,
+                    'description' => esc_html__( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'elementor-xfirst-widget' ),
+                    'default' => [
+                        'width' => '',
+                        'height' => '',
+                    ],
+                ]
+            );
 
         $this->end_controls_section();
 
