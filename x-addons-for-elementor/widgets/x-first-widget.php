@@ -11,7 +11,6 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
 	}
 
     public function get_title() {
-		//return esc_html__( 'oEmbed', 'elementor-oembed-widget' );
         return esc_html__( 'xFirst', 'elementor-xfirst-widget' );
 	}
 
@@ -33,50 +32,203 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
 
     protected function register_controls() {
 
+        // Controles de Conteúdo
         $this->start_controls_section(
-            'content_section', // Identificador único para a seção de controles
+            'content_section',
             [
-                'label' => __( 'Configurações', 'meu-ultimo-post-elementor' ),
+                'label' => __('Configurações', 'elementor-xfirst-widget'),
                 'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
             ]
         );
     
-        // Adiciona um controle deslizante para definir o número de posts a serem exibidos
+        // Modo de Exibição
         $this->add_control(
-            'posts_number', // Identificador único para o controle
+            'display_mode',
             [
-                'label' => __( 'Número de Posts', 'meu-ultimo-post-elementor' ),
+                'label' => __('Modo de Exibição', 'elementor-xfirst-widget'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'latest' => __('Último Post', 'elementor-xfirst-widget'),
+                    'multiple' => __('Vários Posts', 'elementor-xfirst-widget'),
+                ],
+                'default' => 'multiple',
+            ]
+        );
+    
+        // Quantidade de Colunas
+        $this->add_responsive_control(
+            'columns',
+            [
+                'label' => __('Colunas', 'elementor-xfirst-widget'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => '3',
+                'tablet_default' => '2',
+                'mobile_default' => '1',
+                'options' => [
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .meu-ultimo-post' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
+                ],
+                'condition' => [
+                    'display_mode' => 'multiple',
+                ],
+            ]
+        );
+    
+        // Quantidade de Posts por Página
+        $this->add_control(
+            'posts_per_page',
+            [
+                'label' => __('Posts por Página', 'elementor-xfirst-widget'),
                 'type' => \Elementor\Controls_Manager::NUMBER,
-                'min' => 1,
-                'max' => 10,
-                'step' => 1,
-                'default' => 1, // Por padrão, mostra apenas o último post
+                'default' => '5',
+                'condition' => [
+                    'display_mode' => 'multiple',
+                ],
             ]
         );
     
         $this->end_controls_section();
+
+        // Start Title Style Section
+        $this->start_controls_section(
+            'posttitle_style_section',
+            [
+                'label' => __('Post Title', 'elementor-xfirst-widget'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+    
+            $this->add_group_control(
+                \Elementor\Group_Control_Typography::get_type(),
+                [
+                    'name' => 'title_typography',
+                    'label' => __('Tipografia do Título', 'elementor-xfirst-widget'),
+                    'selector' => '{{WRAPPER}} .x-post-title',
+                ]
+            );
+
+            $this->add_control(
+                'text_color',
+                [
+                    'label' => esc_html__( 'Text Color', 'textdomain' ),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .x-post-title' => 'color: {{VALUE}}',
+                    ],
+                ]
+            );
+
+        $this->end_controls_section();
+
+
+
+        $this->start_controls_section(
+            'image_style_section',
+            [
+                'label' => __('Image', 'elementor-xfirst-widget'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+    
+            $this->add_control(
+                'image_width',
+                [
+                    'label' => __('Largura da Imagem (px)', 'elementor-xfirst-widget'),
+                    'type' => \Elementor\Controls_Manager::SLIDER,
+                    'size_units' => ['px'],
+                    'range' => [
+                        'px' => [
+                            'min' => 50,
+                            'max' => 1000,
+                            'step' => 5,
+                        ],
+                    ],
+                    'selectors' => [
+                        '{{WRAPPER}} .post-thumbnail' => 'width: {{SIZE}}{{UNIT}};',
+                    ],
+                ]
+            );
+
+        $this->end_controls_section();
+
+
+
+        $this->start_controls_section(
+            'description_style_section',
+            [
+                'label' => __('Description', 'elementor-xfirst-widget'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+    
+            $this->add_group_control(
+                \Elementor\Group_Control_Typography::get_type(),
+                [
+                    'name' => 'description_typography',
+                    'label' => __('Tipografia da Descrição', 'elementor-xfirst-widget'),
+                    'selector' => '{{WRAPPER}} .x-post-excerpt',
+                ]
+            );
+
+            $this->add_control(
+                'text_color',
+                [
+                    'label' => esc_html__( 'Text Color', 'textdomain' ),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .x-post-excerpt' => 'color: {{VALUE}}',
+                    ],
+                ]
+            );
+    
+        $this->end_controls_section();
+
     }
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $number_of_posts = $settings['posts_number'];
     
-        $recent_posts = wp_get_recent_posts([
-            'numberposts' => $number_of_posts, // Usa o valor do controle
-            'post_status' => 'publish', // Apenas posts publicados
-        ]);
+        $args = [
+            'post_status' => 'publish',
+            'posts_per_page' => $settings['display_mode'] === 'latest' ? 1 : $settings['posts_per_page'],
+        ];
     
-        if (count($recent_posts) === 0) {
+        $query = new WP_Query($args);
+    
+        if (!$query->have_posts()) {
             echo 'Nenhum post encontrado.';
             return;
         }
     
-        echo '<div class="meu-ultimo-post">';
-        foreach ($recent_posts as $post) {
-            echo '<h2><a href="' . get_permalink($post['ID']) . '">' . $post['post_title'] . '</a></h2>';
-            echo '<p>' . $post['post_excerpt'] . '</p>';
+        echo '<div class="meu-ultimo-post" style="display: grid; grid-gap: 20px;">';
+        while ($query->have_posts()) {
+            $query->the_post();
+    
+            $post_id = get_the_ID();
+            $post_thumbnail = get_the_post_thumbnail_url($post_id, 'full');
+            $post_permalink = get_permalink($post_id);
+            $post_title = get_the_title();
+            $post_excerpt = get_the_excerpt();
+    
+            // Structure Post
+            // Estrutura do Post
+            echo '<div class="post-item">';
+            if ($post_thumbnail) {
+                echo '<img class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+            }
+            echo '<h2 class="x-post-title"><a href="' . esc_url($post_permalink) . '">' . esc_html($post_title) . '</a></h2>';
+            echo '<p class="x-post-excerpt">' . esc_html($post_excerpt) . '</p>';
+            echo '</div>';
         }
         echo '</div>';
+    
+        wp_reset_postdata();
     }
 
 }

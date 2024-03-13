@@ -3,7 +3,7 @@
  * Plugin Name: X Addons For Elementor
  * Description: One Elementor Widget.
  * Plugin URI:  https://yootiq.com/x-addon/
- * Version:     0.0.1
+ * Version:     0.0.3
  * Author:      Thiago Ximenes
  * Author URI:  https://yootiq.com/contact/
  * Text Domain: x-first-widget
