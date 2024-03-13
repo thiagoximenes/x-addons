@@ -119,7 +119,7 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
                     'label' => esc_html__( 'Text Color', 'textdomain' ),
                     'type' => \Elementor\Controls_Manager::COLOR,
                     'selectors' => [
-                        '{{WRAPPER}} .x-post-title' => 'color: {{VALUE}}',
+                        '{{WRAPPER}} .x-post-title a' => 'color: {{VALUE}}',
                     ],
                 ]
             );
@@ -127,7 +127,7 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
 
 
-
+        //IMAGE
         $this->start_controls_section(
             'image_style_section',
             [
@@ -155,10 +155,22 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
                 ]
             );
 
+            // $this->add_control(
+            //     'image_border_radius',
+            //     [
+            //         'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
+            //         'type' => Controls_Manager::SLIDER,
+            //         'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+            //         'selectors' => [
+            //             '{{WRAPPER}} .post-thumbnail' => 'border-radius: {{SIZE}}{{UNIT}}',
+            //         ],
+            //     ]
+            // );
+
         $this->end_controls_section();
 
 
-
+        //DESCRIPTION
         $this->start_controls_section(
             'description_style_section',
             [
