@@ -103,7 +103,8 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
-    
+
+            //TITLE
             $this->add_group_control(
                 \Elementor\Group_Control_Typography::get_type(),
                 [
@@ -116,7 +117,7 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
             $this->add_control(
                 'text_color',
                 [
-                    'label' => esc_html__( 'Text Color', 'textdomain' ),
+                    'label' => esc_html__( 'Text Color', 'elementor-xfirst-widget' ),
                     'type' => \Elementor\Controls_Manager::COLOR,
                     'selectors' => [
                         '{{WRAPPER}} .x-post-title a' => 'color: {{VALUE}}',
@@ -137,11 +138,11 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
         );
     
             $this->add_control(
-                'image_width',
+                'image_height',
                 [
-                    'label' => __('Largura da Imagem (px)', 'elementor-xfirst-widget'),
+                    'label' => __('Altura (px)', 'elementor-xfirst-widget'),
                     'type' => \Elementor\Controls_Manager::SLIDER,
-                    'size_units' => ['px'],
+                    'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
                     'range' => [
                         'px' => [
                             'min' => 50,
@@ -150,20 +151,7 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
                         ],
                     ],
                     'selectors' => [
-                        '{{WRAPPER}} .post-thumbnail' => 'width: {{SIZE}}{{UNIT}};',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'custom_dimension',
-                [
-                    'label' => esc_html__( 'Image Dimension', 'textdomain' ),
-                    'type' => \Elementor\Controls_Manager::IMAGE_DIMENSIONS,
-                    'description' => esc_html__( 'Crop the original image size to any custom size. Set custom width or height to keep the original size ratio.', 'elementor-xfirst-widget' ),
-                    'default' => [
-                        'width' => '',
-                        'height' => '',
+                        '{{WRAPPER}} .post-thumbnail' => 'height: {{SIZE}}{{UNIT}};',
                     ],
                 ]
             );
@@ -171,11 +159,11 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
 
 
-        //DESCRIPTION
+        //EXCERPT
         $this->start_controls_section(
-            'description_style_section',
+            'excerpt_style_section',
             [
-                'label' => __('Description', 'elementor-xfirst-widget'),
+                'label' => __('Excerpt', 'elementor-xfirst-widget'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -183,16 +171,16 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
             $this->add_group_control(
                 \Elementor\Group_Control_Typography::get_type(),
                 [
-                    'name' => 'description_typography',
+                    'name' => 'excerpt_typography',
                     'label' => __('Tipografia da Descrição', 'elementor-xfirst-widget'),
                     'selector' => '{{WRAPPER}} .x-post-excerpt',
                 ]
             );
 
             $this->add_control(
-                'text_color',
+                'excerpt_color',
                 [
-                    'label' => esc_html__( 'Text Color', 'textdomain' ),
+                    'label' => esc_html__( 'Text Color', 'elementor-xfirst-widget' ),
                     'type' => \Elementor\Controls_Manager::COLOR,
                     'selectors' => [
                         '{{WRAPPER}} .x-post-excerpt' => 'color: {{VALUE}}',
@@ -229,15 +217,42 @@ class Elementor_xFirst_Widget extends \Elementor\Widget_Base {
             $post_title = get_the_title();
             $post_excerpt = get_the_excerpt();
     
-            // Structure Post
-            // Estrutura do Post
-            echo '<div class="post-item">';
-            if ($post_thumbnail) {
-                echo '<img class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+            if($settings['display_mode'] === 'latest'){
+                echo '<div class="post-item x-lastest-post">';
+                echo '<figure class="ha-card-figure">';
+                if ($post_thumbnail) {
+                    echo '<img loading="lazy" class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+                }
+                echo '<div class="ha-badge ha-badge--top-right">Categoria</div>';
+                echo '</figure>';
+                
+                
+                
+
+                if ($post_thumbnail) {
+                    echo '<img class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+                }
+                echo '<h2 class="x-post-title"><a href="' . esc_url($post_permalink) . '">' . esc_html($post_title) . '</a></h2>';
+                echo '<p class="x-post-excerpt">' . esc_html($post_excerpt) . '</p>';
+                echo '</div>';
+
+            }else{
+                echo '<div class="post-item x-post-grid">';
+                if ($post_thumbnail) {
+                    echo '<img class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+                }
+                echo '<h2 class="x-post-title"><a href="' . esc_url($post_permalink) . '">' . esc_html($post_title) . '</a></h2>';
+                echo '<p class="x-post-excerpt">' . esc_html($post_excerpt) . '</p>';
+                echo '</div>';
             }
-            echo '<h2 class="x-post-title"><a href="' . esc_url($post_permalink) . '">' . esc_html($post_title) . '</a></h2>';
-            echo '<p class="x-post-excerpt">' . esc_html($post_excerpt) . '</p>';
-            echo '</div>';
+
+            // echo '<div class="post-item">';
+            // if ($post_thumbnail) {
+            //     echo '<img class="post-thumbnail" src="' . esc_url($post_thumbnail) . '" alt="' . esc_attr($post_title) . '">';
+            // }
+            // echo '<h2 class="x-post-title"><a href="' . esc_url($post_permalink) . '">' . esc_html($post_title) . '</a></h2>';
+            // echo '<p class="x-post-excerpt">' . esc_html($post_excerpt) . '</p>';
+            // echo '</div>';
         }
         echo '</div>';
     
